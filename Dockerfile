@@ -1,5 +1,5 @@
 FROM ubuntu:20.04
-LABEL maintainer="Sasha Gerrand <github+docker-glibc-builder@sgerrand.com>"
+LABEL maintainer="Shigemi ISHIDA <ish@fun.ac.jp>"
 ENV DEBIAN_FRONTEND=noninteractive \
     GLIBC_VERSION=2.33 \
     PREFIX_DIR=/usr/glibc-compat
