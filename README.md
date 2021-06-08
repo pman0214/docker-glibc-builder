@@ -2,8 +2,8 @@
 
 >Built with [pman0214/docker-glibc-builder], forked from [sgerrand/docker-glibc-builder] to support multi-arch images
 
-[pman0214/docker-glibc-builder]: (https://github.com/pman0214/docker-glibc-builder)
-[sgerrand/docker-glibc-builder]: (https://github.com/sgerrand/docker-glibc-builder)
+[pman0214/docker-glibc-builder]: https://github.com/pman0214/docker-glibc-builder
+[sgerrand/docker-glibc-builder]: https://github.com/sgerrand/docker-glibc-builder
 
 A glibc binary package builder in Docker. Produces a glibc binary package that can be imported into a rootfs to run applications dynamically linked against glibc.
 
