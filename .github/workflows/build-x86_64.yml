@@ -4,7 +4,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      tag:
+      target_tag:
         description: Release target tag
         type: string
         required: false
@@ -20,18 +20,17 @@ jobs:
       - name: Get Latest Tag
         id: get_latest_tag
         run: |
-          echo "$(git describe --tags --abbrev=0)" > TAG_NAME
-          echo "latest_tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
+          echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
       - name: Set Target Tag
         id: set_target_tag
         run: |
-          if [[ "${{ github.event.inputs.release_version }}" != '' ]]; then
-            echo 'Release target tag: ${{ github.event.inputs.release_version }}'
-            echo "${{ github.event.inputs.release_version }}" > TAG_NAME
+          if [[ "${{ github.event.inputs.target_tag }}" != '' ]]; then
+            echo 'Release target tag: ${{ github.event.inputs.target_tag }}'
+            echo "${{ github.event.inputs.target_tag }}" > TAG_NAME
           else
             echo "${{ steps.get_latest_tag.outputs.tag }}" > TAG_NAME
           fi
-          echo "target_tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
+          echo "tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
       - name: Switch to Target Tag
         uses: actions/checkout@v4
         with:
