@@ -1,0 +1,38 @@
+name: Build for x86_64
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release target tag
+        type: string
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get Latest Tag
+        id: get_latest_tag
+        run: |
+          echo "$(git describe --tags --abbrev=0)" > LATEST_TAG
+          echo ::set-output name=tag::$(cat LATEST_TAG)
+      - name: Set Target Tag
+        id: set_target_tag
+        run: |
+          if [[ "${{ github.event.inputs.release_version }}" != '' ]]; then
+            echo 'Release target tag: ${{ github.event.inputs.release_version }}'
+            echo "${{ github.event.inputs.release_version }}" > TAG_NAME
+          else
+            echo "${{ steps.get_latest_tag.outputs.tag }}" > TAG_NAME
+          fi
+          echo ::set-output name=target_tag::$(cat TAG_NAME)
+      - name: Switch to Target Tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.set_latest_tag.outputs.tag }}
