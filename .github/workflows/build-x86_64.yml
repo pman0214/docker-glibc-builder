@@ -13,6 +13,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Architecture
+        id: get_arch
+        run: |
+          echo "Architecture: $(arch)"
+          echo "arch=$(arch)" >> $GITHUB_OUTPUT
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -25,13 +30,21 @@ jobs:
         id: set_target_tag
         run: |
           if [[ "${{ github.event.inputs.target_tag }}" != '' ]]; then
-            echo 'Release target tag: ${{ github.event.inputs.target_tag }}'
             echo "${{ github.event.inputs.target_tag }}" > TAG_NAME
           else
             echo "${{ steps.get_latest_tag.outputs.tag }}" > TAG_NAME
           fi
+          echo "Target tag: $(cat TAG_NAME)"
           echo "tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
       - name: Switch to Target Tag
-        uses: actions/checkout@v4
+        run: |
+          git checkout ${{ steps.set_target_tag.outputs.tag }}
+      - name: Build
+        runs: |
+          docker run --rm pman0214/glibc-builder ${{ steps.set_target_tag.outputs.tag }} > glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
+      - name: Archive Build Output
+        uses: actions/upload-artifact@v4
         with:
-          ref: ${{ steps.set_latest_tag.outputs.tag }}
+          name: built-glibc-bin
+          path: glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
+          retention-days: 3
