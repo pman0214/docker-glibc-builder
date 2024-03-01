@@ -41,7 +41,6 @@ jobs:
           git checkout ${{ steps.set_target_tag.outputs.tag }}
       - name: Build
         run: |
-          docker run --rm pman0214/glibc-builder ${{ steps.set_target_tag.outputs.tag }} > glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
           docker run --name glibc-binary pman0214/glibc-builder ${{ steps.set_target_tag.outputs.tag }} /usr/glibc-compat 
           docker cp glibc-binary:/glibc-bin-${{ steps.set_target_tag.outputs.tag }}.tar.gz ./
           mv glibc-bin-${{ steps.set_target_tag.outputs.tag }}.tar.gz glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
