@@ -40,7 +40,7 @@ jobs:
         run: |
           git checkout ${{ steps.set_target_tag.outputs.tag }}
       - name: Build
-        runs: |
+        run: |
           docker run --rm pman0214/glibc-builder ${{ steps.set_target_tag.outputs.tag }} > glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
       - name: Archive Build Output
         uses: actions/upload-artifact@v4
