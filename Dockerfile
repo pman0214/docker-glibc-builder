@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer="Shigemi ISHIDA <ish@fun.ac.jp>"
 ENV DEBIAN_FRONTEND=noninteractive \
-    GLIBC_VERSION=2.33 \
+    GLIBC_VERSION=2.37 \
     PREFIX_DIR=/usr/glibc-compat
 RUN apt-get -q update \
 	&& apt-get -qy install \
