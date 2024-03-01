@@ -20,8 +20,8 @@ jobs:
       - name: Get Latest Tag
         id: get_latest_tag
         run: |
-          echo "$(git describe --tags --abbrev=0)" > LATEST_TAG
-          echo ::set-output name=tag::$(cat LATEST_TAG)
+          echo "$(git describe --tags --abbrev=0)" > TAG_NAME
+          echo "latest_tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
       - name: Set Target Tag
         id: set_target_tag
         run: |
@@ -31,7 +31,7 @@ jobs:
           else
             echo "${{ steps.get_latest_tag.outputs.tag }}" > TAG_NAME
           fi
-          echo ::set-output name=target_tag::$(cat TAG_NAME)
+          echo "target_tag=$(cat TAG_NAME)" >> $GITHUB_OUTPUT
       - name: Switch to Target Tag
         uses: actions/checkout@v4
         with:
