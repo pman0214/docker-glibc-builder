@@ -41,9 +41,7 @@ jobs:
           git checkout ${{ steps.set_target_tag.outputs.tag }}
       - name: Build
         run: |
-          docker run --name glibc-binary pman0214/glibc-builder ${{ steps.set_target_tag.outputs.tag }} /usr/glibc-compat 
-          docker cp glibc-binary:/glibc-bin-${{ steps.set_target_tag.outputs.tag }}.tar.gz ./
-          mv glibc-bin-${{ steps.set_target_tag.outputs.tag }}.tar.gz glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
+          docker run --rm --env STDOUT=1 pman0214/glibc-builder 2.37 /usr/glibc-compat > glibc-bin-${{ steps.set_target_tag.outputs.tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
       - name: Archive Build Output
         uses: actions/upload-artifact@v4
         with:
