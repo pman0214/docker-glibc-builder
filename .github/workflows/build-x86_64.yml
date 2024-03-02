@@ -20,10 +20,10 @@ jobs:
           echo "arch=$(arch)" >> $GITHUB_OUTPUT
       - name: Build
         run: |
-          docker run --rm --env STDOUT=1 --env GLIBC_VERSION=${{ github.event.inputs.target_tag }} pman0214/glibc-builder ${{ github.event.inputs.target_tag }} /usr/glibc-compat > glibc-bin-${{ github.event.inputs.target_tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
+          docker run --rm --env STDOUT=1 --env GLIBC_VERSION=${{ github.event.inputs.target_version }} pman0214/glibc-builder ${{ github.event.inputs.target_version }} /usr/glibc-compat > glibc-bin-${{ github.event.inputs.target_version }}-${{ steps.get_arch.outputs.arch }}.tar.gz
       - name: Archive build output
         uses: actions/upload-artifact@v4
         with:
           name: built-glibc-bin
-          path: glibc-bin-${{ github.event.inputs.target_tag }}-${{ steps.get_arch.outputs.arch }}.tar.gz
+          path: glibc-bin-${{ github.event.inputs.target_version }}-${{ steps.get_arch.outputs.arch }}.tar.gz
           retention-days: 3
