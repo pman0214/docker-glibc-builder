@@ -9,16 +9,16 @@ A glibc binary package builder in Docker. Produces a glibc binary package that c
 
 ## Usage
 
-Build a glibc package based on version 2.37 with a prefix of `/usr/glibc-compat`:
+Build a glibc package based on version <version> with a prefix of `/usr/glibc-compat`:
 
 ```
-    docker run --rm --env STDOUT=1 pman0214/glibc-builder 2.37 /usr/glibc-compat > glibc-bin.tar.gz
+    docker run --rm --env STDOUT=1 pman0214/glibc-builder <version> /usr/glibc-compat > glibc-bin.tar.gz
 ```
 
 You can also keep the container around and copy out the resulting file:
 
 ```
-    docker run --name glibc-binary pman0214/glibc-builder 2.37 /usr/glibc-compat
-    docker cp glibc-binary:/glibc-bin-2.37.tar.gz ./
+    docker run --name glibc-binary pman0214/glibc-builder <version> /usr/glibc-compat
+    docker cp glibc-binary:/glibc-bin-<version>.tar.gz ./
     docker rm glibc-binary
 ```
