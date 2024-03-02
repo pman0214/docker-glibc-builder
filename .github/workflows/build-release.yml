@@ -1,0 +1,73 @@
+name: Build and release
+
+permissions:
+  contents: write
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: Release target version
+        type: string
+        required: true
+
+jobs:
+  preparation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CHeckout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Tag to repository
+        run: |
+          git tag ${{ github.event.inputs.target_tag }}
+          git push origin ${{ github.event.inputs.target_tag }}
+
+  build_x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        run: |
+          docker run --rm --env STDOUT=1 --env GLIBC_VERSION=${{ github.event.inputs.target_tag }} pman0214/glibc-builder ${{ github.event.inputs.target_tag }} /usr/glibc-compat > glibc-bin-${{ github.event.inputs.target_tag }}-x86_64.tar.gz
+      - name: Archive build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: glibc-bin-x86_64
+          path: glibc-bin-${{ github.event.inputs.target_tag }}-x86_64.tar.gz
+          retention-days: 1
+
+  build_arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build
+        run: |
+          docker run --platform linux/amd64 --rm --env STDOUT=1 --env GLIBC_VERSION=${{ github.event.inputs.target_tag }} pman0214/glibc-builder ${{ github.event.inputs.target_tag }} /usr/glibc-compat > glibc-bin-${{ github.event.inputs.target_tag }}-arm64.tar.gz
+      - name: Archive build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: glibc-bin-arm64
+          path: glibc-bin-${{ github.event.inputs.target_tag }}-arm64.tar.gz
+          retention-days: 1
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [build_x86_64, build_arm64]
+    steps:
+      - name: Download archives
+        uses: actions/download-artifact@v4
+        with:
+          pattern: glibc-bin-*
+          merge-multiple: true
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.target_tag }}
+          body: |
+            The GNU C Library, version ${{ github.event.inputs.target_tag }} for
+            - arm64 (aarch64)
+            - x86_64 (amd64)
+          files: |
+            glibc-bin-${{ github.event.inputs.target_tag }}-x86_64.tar.gz
+            glibc-bin-${{ github.event.inputs.target_tag }}-arm64.tar.gz
